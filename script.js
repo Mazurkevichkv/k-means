@@ -2,7 +2,7 @@ function kMeans ({ clustersCount = 10, elementsCount = 500, autoMode = false }) 
     const width = window.innerWidth - 50,
           height = window.innerHeight - 50,
           depth = 1000;
-    let clusterizationCounter = 70;
+    let clusterizationCounter = 30;
     const canvas = document.getElementById('canvas');
     const renderer = new THREE.WebGLRenderer({ canvas });
     renderer.setClearColor(0x000000);
@@ -77,8 +77,8 @@ function kMeans ({ clustersCount = 10, elementsCount = 500, autoMode = false }) 
     function kMeansIteration () {
         if (clusterizationCounter > 0) {
             clusters = clusterize();
+            setCentroidsPositions();
         }
-        setCentroidsPositions();
     }
 
     (function loop () {
@@ -108,13 +108,15 @@ function kMeans ({ clustersCount = 10, elementsCount = 500, autoMode = false }) 
         function animateChangePosition(mesh, startPosition, targetPosition) {
             const speed = document.getElementById('speed').value;
             const eps = 10;
-            const steps = 10000 / speed;
             const {x, y, z} = startPosition;
-            if (Math.abs(x - targetPosition.x) < eps &&
-                Math.abs(y - targetPosition.y) < eps &&
-                Math.abs(z - targetPosition.z) < eps) {
+
+            const dist = getRawDistance(startPosition, targetPosition);
+            const steps = dist / speed;
+            if (dist < eps) {
                 if (autoMode) {
-                    requestAnimationFrame(kMeansIteration)
+                    if (clusterizationCounter > 0) {
+                        requestAnimationFrame(kMeansIteration)
+                    }
                 }
                 return;
             } else {
@@ -164,6 +166,16 @@ function kMeans ({ clustersCount = 10, elementsCount = 500, autoMode = false }) 
                 Math.pow(meshA.position.y - meshB.position.y, 2)
             ), 2) +
             Math.pow(meshA.position.z - meshB.position.z, 2)
+        );
+    }
+
+    function getRawDistance (pointA, pointB) {
+        return Math.sqrt(
+            Math.pow(Math.sqrt(
+                Math.pow(pointA.x - pointB.x, 2) +
+                Math.pow(pointA.y - pointB.y, 2)
+            ), 2) +
+            Math.pow(pointA.z - pointB.z, 2)
         );
     }
 }
