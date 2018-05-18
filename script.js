@@ -183,6 +183,6 @@ function kMeans ({ clustersCount = 10, elementsCount = 500, autoMode = false }) 
 function start() {
     const clustersCount = parseInt(document.getElementById('clustersCountInput').value);
     const elementsCount = parseInt(document.getElementById('elementsCountInput').value);
-    const autoMode = document.getElementById('auto-mode').checked;
-    kMeans({ clustersCount, elementsCount, autoMode });
+    //const autoMode = document.getElementById('auto-mode').checked;
+    kMeans({ clustersCount, elementsCount });
 }
